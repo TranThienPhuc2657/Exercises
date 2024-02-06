@@ -47,25 +47,37 @@ ll inverseMod(int i) {
     return powMod(i,mod-2);
 }
 
-ll factorial[N];
+ll factorial[N],ifactorial[N];
 ll C(int j,int i) {
-    return ((factorial[i]%mod) * inverseMod(factorial[i-j]*factorial[j]%mod))%mod;
+    return factorial[i] %mod * ifactorial[i-j] %mod * ifactorial[j] %mod;
+}
+
+void precompute() {
+    factorial[0]=1;
+    factorial[1]=1;
+    FOR(i,2,n+m) factorial[i]=i*factorial[i-1]%mod;
+    //Ta sẽ tính trước mảng nghịch đảo modulo của i! bằng công thức sau:
+    //ifactorial[i]=(i+1)*ifactorial[i+1]
+    //Chứng minh công thức: i!^-1 = ((i-1)!i)^-1 = ((i-1)!)^-1 . i^-1
+    //Vậy i!^-1 đồng dư ((i-1)!)^-1 . i^-1
+    //Nhân hai vế cho i => i!^-1 . i đồng dư ((i-1)!)^-1
+    //Như vậy ifactorial[i-1]=ifactorial[i]*i
+    //Bằng với ifactorial[i]=ifactorial[i+1]*(i+1)
+    //Vậy ta sẽ tính ifactorial của (n+m)! và đi xuống tới 0 bằng công thức như trên
+    ifactorial[n+m]=inverseMod(factorial[n+m]);
+    FORD(i,n+m-1,0) ifactorial[i]=ifactorial[i+1]*(i+1)%mod;
 }
 
 namespace sub2{
     void process() {
-        factorial[0]=1;
-        factorial[1]=1;
-        FOR(i,2,n+m) factorial[i]=i*factorial[i-1]%mod;
+        precompute();
         cout << C(n,n+m);   
     }
 }
 
 namespace sub3{
     void process() {
-        factorial[0]=1;
-        factorial[1]=1;
-        FOR(i,2,n+m) factorial[i]=i*factorial[i-1]%mod;
+        precompute();
         cout << (C(n,n+m)*powMod(a,n)*powMod(b,m))%mod;   
     }
 }
@@ -74,9 +86,7 @@ namespace sub4{
     ll sum=0;
 
     void process() {
-        factorial[0]=1;
-        factorial[1]=1;
-        FOR(i,2,n+m) factorial[i]=i*factorial[i-1]%mod;
+        precompute();
         FOR(k,0,min(n,m)) 
             sum=(sum+(C(k,n+m-k)*C(n-k,n+m-2*k)%mod*powMod(a,n-k)%mod*powMod(b,m-k)%mod*powMod(c,k))%mod)%mod;
         cout << sum;
