@@ -1,4 +1,3 @@
-/*
 //Dijkstra
 #include <bits/stdc++.h>
 using namespace std;
@@ -75,9 +74,8 @@ int main() {
     cerr << "Time elapsed: " << TIME << "s.\n";
     return 0;
 }
-*/
-/*
-//BFS
+
+//DFS + Binary search
 #include <bits/stdc++.h>
 using namespace std;
 #define file(name) if(fopen(name".inp","r")) {freopen(name".inp","r",stdin); freopen(name".out","w",stdout);}
@@ -91,6 +89,7 @@ using namespace std;
 #define FORD(i,a,b) for(int i=a; i>=b; i--)
 #define all(x) (x).begin(), (x).end()
 #define len(x) (int)((x).size())
+#define ins insert
 #define ll long long
 #define vi vector <int>
 #define vll vector <ll>
@@ -103,29 +102,38 @@ template <typename T1,typename T2> void maxi(T1 &a,T2 b) {if (a<b) a=b;}
 const int N=1e3+5;
 
 int n,m,u,v,w;
-vll res;
+bool vis[N];
 struct edge{
-    int v;
-    ll w;
+    int v,w;
 };
 vector <edge> a[N];
 
-void bfs() {
-    res.resize(n+1,INF);
-    queue <int> q;
-    q.push(1);
-    res[1]=0;
-    int u;
-    while (!q.empty()) {
-        u=q.front(); q.pop();
-        for (auto e: a[u]) {
-            int v=e.v; ll w=e.w;
-            if(res[v]>max(res[u],w)) {
-                res[v]=max(res[u],w);
-                q.push(v);
-            }
-        }
+bool dfs(int u,int k) {
+    vis[u]=true;
+    if (u==n) return true;
+    for (auto e: a[u]) {
+        int v=e.v, w=e.w;
+        if (vis[v]) continue;
+        if (w>k) continue;
+        if (dfs(v,k)) return true;
     }
+    return false;
+}
+
+bool check(int k) {
+    memset(vis,0,sizeof(vis));
+    if (dfs(1,k)) return true;
+    return false;
+}
+
+int bin_search() {
+    int l=0, r=1e9;
+    while (l<r) {
+        int mid=l+(r-l)/2;
+        if (check(mid)) r=mid;
+        else l=mid+1;
+    }
+    return l;
 }
 
 int main() {
@@ -134,9 +142,7 @@ int main() {
     
     cin >> n >> m;
     REP(i,m) {cin >> u >> v >> w; a[u].pb({v,w}); a[v].pb({u,w});}
-    bfs();
-    cout << res[n];
+    cout << bin_search();
     cerr << "Time elapsed: " << TIME << "s.\n";
     return 0;
 }
-*/
