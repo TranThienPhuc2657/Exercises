@@ -22,6 +22,7 @@ using namespace std;
 template <typename T1,typename T2> void mini(T1 &a,T2 b) {if (a>b) a=b;}
 template <typename T1,typename T2> void maxi(T1 &a,T2 b) {if (a<b) a=b;}
 const int N=1e7+5;
+const int N2=5e6+5;
 const int mod=1e9+7;
 
 int n,m,a,b,c;
@@ -78,17 +79,26 @@ namespace sub2{
 namespace sub3{
     void process() {
         precompute();
-        cout << (C(n,n+m)*powMod(a,n)*powMod(b,m))%mod;   
+        cout << (C(n,n+m)*powMod(a,n) %mod *powMod(b,m))%mod;   
     }
 }
 
 namespace sub4{
-    ll sum=0;
+    ll sum=0,powa[N2],powb[N2],powc[N2];
+
+    void compute_exp() {
+        powa[0]=1; powb[0]=1; powc[0]=1;
+        powa[1]=a%mod; powb[1]=b%mod; powc[1]=c%mod;
+        FOR(i,2,n) powa[i]=powa[i-1]*(a%mod)%mod;
+        FOR(i,2,m) powb[i]=powb[i-1]*(b%mod)%mod;
+        FOR(i,2,min(n,m)) powc[i]=powc[i-1]*(c%mod)%mod;
+    }
 
     void process() {
         precompute();
+        compute_exp();
         FOR(k,0,min(n,m)) 
-            sum=(sum+(C(k,n+m-k)*C(n-k,n+m-2*k)%mod*powMod(a,n-k)%mod*powMod(b,m-k)%mod*powMod(c,k))%mod)%mod;
+            sum=(sum+(C(k,n+m-k)*C(n-k,n+m-2*k)%mod*powa[n-k]%mod*powb[m-k]%mod*powc[k])%mod)%mod;
         cout << sum;
     }
 }
