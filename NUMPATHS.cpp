@@ -47,6 +47,7 @@ ll powMod(int i,int j) {
 ll inverseMod(int i) {
     return powMod(i,mod-2);
 }
+//i^p đồng dư i (mod p) (fermat nhỏ) => chia hai vế cho i^2 => i^(p-2) đồng dư 1/i (mod p)
 
 ll factorial[N],ifactorial[N];
 ll C(int j,int i) {
